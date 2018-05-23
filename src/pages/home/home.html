@@ -1,17 +1,15 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>Home</ion-title>
+    <ion-title>Indicadores</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let item of indicadorList" >
+      <ion-label col-9 (click)="itemTapped(item)"> {{item.nombre}}</ion-label>
+      <ion-label col-1 (click)="itemTapped(item)"> <ion-icon name="ios-arrow-forward"></ion-icon> </ion-label>
+      <ion-label col-1> <ion-icon name="information-circle"></ion-icon> </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

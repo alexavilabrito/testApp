@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Valores</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+
+  <ion-list>
+
+
+    <ion-item detail-push *ngFor="let item of serieList" >
+      <ion-label col-8> {{item.fecha}}</ion-label>
+      <ion-label col-4>{{item.valor | currency:"$ ":0.00}}</ion-label>
+    </ion-item>
+
+
+
+  </ion-list>
+
+
+
