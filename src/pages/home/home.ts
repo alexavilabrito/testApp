@@ -3,6 +3,7 @@ import { NavController } from 'ionic-angular';
 import { IndicadorProvider } from '../../provider/indicador';
 import { IndicadorModel } from "../../app/models/IndicadorModel";
 import {ItemDetailsPage} from "../itemdetails/itemdetails";
+import {GraficoPage} from "../grafico/grafico";
 
 
 @Component({
@@ -15,7 +16,8 @@ export class HomePage {
 
   constructor(public navCtrl: NavController , indicador: IndicadorProvider ) {
 
-    indicador.getIndicadores().subscribe(
+
+    indicador.getIndicadores( ).subscribe(
         (result)=>{
           this.indicadorList = new Array<IndicadorModel>();
           for(var k in result) {
@@ -44,10 +46,19 @@ export class HomePage {
         }
     );
 
+
+
   }
+
+
 
   itemTapped(item) {
     this.navCtrl.push( ItemDetailsPage , { item } );
+  }
+
+
+  itemTappedGrafico(item) {
+    this.navCtrl.push( GraficoPage , { item } );
   }
 
 

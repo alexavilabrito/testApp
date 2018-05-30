@@ -8,11 +8,14 @@ import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 import { ItemDetailsPage } from "../pages/itemdetails/itemdetails";
+import { GraficoPage } from "../pages/grafico/grafico";
 
 import { HttpClientModule } from '@angular/common/http';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+
+import { ChartsModule } from 'ng2-charts';
 
 // provider
 import { IndicadorProvider } from '../provider/indicador';
@@ -24,12 +27,14 @@ import { IndicadorProvider } from '../provider/indicador';
     ContactPage,
     HomePage,
     TabsPage,
-    ItemDetailsPage
+    ItemDetailsPage,
+    GraficoPage
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    ChartsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -38,7 +43,8 @@ import { IndicadorProvider } from '../provider/indicador';
     ContactPage,
     HomePage,
     TabsPage,
-    ItemDetailsPage
+    ItemDetailsPage,
+    GraficoPage
   ],
   providers: [
     StatusBar,

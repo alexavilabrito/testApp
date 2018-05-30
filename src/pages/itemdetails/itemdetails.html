@@ -11,8 +11,8 @@
 
 
     <ion-item detail-push *ngFor="let item of serieList" >
-      <ion-label col-8> {{item.fecha}}</ion-label>
-      <ion-label col-4>{{item.valor | currency:"$ ":0.00}}</ion-label>
+      <ion-label col-8> {{item.getFechaFmt()}}</ion-label>
+      <ion-label col-4>{{item.getValorFormateado()}}</ion-label>
     </ion-item>
 
 

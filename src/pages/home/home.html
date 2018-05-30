@@ -7,9 +7,9 @@
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let item of indicadorList" >
-      <ion-label col-9 (click)="itemTapped(item)"> {{item.nombre}}</ion-label>
-      <ion-label col-1 (click)="itemTapped(item)"> <ion-icon name="ios-arrow-forward"></ion-icon> </ion-label>
-      <ion-label col-1> <ion-icon name="information-circle"></ion-icon> </ion-label>
+      <ion-label col-9 (click)="itemTapped(item)">{{item.nombre}}</ion-label>
+      <ion-label col-1 (click)="itemTapped(item)"><ion-icon name="ios-arrow-forward"></ion-icon> </ion-label>
+      <ion-label col-1 (click)="itemTappedGrafico(item)"> <ion-icon name="information-circle"></ion-icon> </ion-label>
     </ion-item>
   </ion-list>
 </ion-content>

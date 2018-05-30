@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Grafico
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div class="row">
+    <ion-label col-8>{{item.nombre}} : {{item.unidad_medida}}</ion-label>
+  </div>
+  <div class="row">
+    <ion-label col-8>Valor : {{item.getValorFormateado()}}</ion-label>
+  </div>
+
+  <div class="row">
+      <div style="display: block;">
+        <canvas baseChart width="350" height="400"
+                [datasets]="lineChartData"
+                [labels]="lineChartLabels"
+                [options]="lineChartOptions"
+                [colors]="lineChartColors"
+                [legend]="lineChartLegend"
+                [chartType]="lineChartType"
+                (chartHover)="chartHovered($event)"
+                (chartClick)="chartClicked($event)"></canvas>
+      </div>
+  </div>
+</ion-content>
