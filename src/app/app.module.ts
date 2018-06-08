@@ -19,6 +19,7 @@ import { ChartsModule } from 'ng2-charts';
 
 // provider
 import { IndicadorProvider } from '../provider/indicador';
+import {SerieProvider} from "../provider/serie";
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { IndicadorProvider } from '../provider/indicador';
     StatusBar,
     SplashScreen,
     IndicadorProvider,
+    SerieProvider,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

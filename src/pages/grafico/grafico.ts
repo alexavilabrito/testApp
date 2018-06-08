@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { IndicadorProvider } from '../../provider/indicador';
-import { SerieModel } from "../../app/models/SerieModel";
 import {IndicadorModel} from "../../app/models/IndicadorModel";
+import IObserver = Interfaces.IObserver;
+import {SerieProvider} from "../../provider/serie";
 
 @Component({
   selector: 'page-grafico',
   templateUrl: 'grafico.html'
 })
-export class GraficoPage {
+export class GraficoPage implements IObserver {
 
-  public serieList:Array<SerieModel>;
+  public serieList ;
   public lineChartData:Array<any> = [{data: [ ], label: ''}];
 
   public lineChartLabels:Array<any> = [];
@@ -48,57 +48,14 @@ export class GraficoPage {
   public lineChartType:string = 'line';
   public item:IndicadorModel;
 
-  constructor(public navCtrl: NavController , navParam : NavParams, public indicador: IndicadorProvider) {
+  constructor(public navCtrl: NavController , navParam : NavParams, serie: SerieProvider) {
     this.item = navParam.get('item');
-    this.llenagrafico( this.item );
+    serie.RegisterObserver( this );
+    serie.getSerieIndicador( this.item );
   }
 
-  public llenagrafico( item ) : void {
 
-    let _lineChartData:Array<any> = new Array(this.lineChartData.length);
-
-    this.indicador.getValorIndicador_ext( item ).subscribe(
-      (result)=>{
-        this.serieList = new Array<SerieModel>();
-        for(var k in result['serie']) {
-          //console.log( result['serie'][k] );
-          let serie = new SerieModel();
-
-          serie.fecha = result['serie'][k].fecha;
-          serie.valor = result['serie'][k].valor;
-          this.serieList.push( serie );
-        }
-
-        this.serieList = this.serieList.sort(
-          (a,b):number => {
-            if( a.fecha < b.fecha ) return -1;
-            if( a.fecha > b.fecha ) return 1;
-            return 0;
-          }
-        );
-
-
-        _lineChartData[0] = {data: new Array(result['serie'].length), label: result['nombre']};
-        let j=0;
-        for( var serie in this.serieList ){
-          _lineChartData[0].data[j++] = this.serieList[serie].valor;
-          let d = new Date(this.serieList[serie].fecha);
-          var options = {  year: 'numeric', month: 'numeric', day: 'numeric' };
-          this.lineChartLabels.push( d.toLocaleDateString('es-CL', options) );
-        }
-
-
-        this.lineChartData = _lineChartData;
-      },(exception) =>{
-        console.log(exception)
-      }
-    );
-
-
-
-  }
-
-// events
+  // events
   public chartClicked(e:any):void {
     console.log(e);
 
@@ -106,6 +63,25 @@ export class GraficoPage {
 
   public chartHovered(e:any):void {
     console.log(e);
+  }
+
+  ReceiveNotification<Array>(dataArrived: Array): void {
+
+    let _lineChartData = new Array(this.lineChartData.length);
+    this.serieList = dataArrived;
+
+    _lineChartData[0] = {data: new Array(this.serieList.length), label: this.item.codigo };
+
+    let j=0;
+    for( var serie in this.serieList ){
+      _lineChartData[0].data[j++] = this.serieList[serie].valor;
+      let d = new Date(this.serieList[serie].fecha);
+      var options = {  year: 'numeric', month: 'numeric', day: 'numeric' };
+      this.lineChartLabels.push( d.toLocaleDateString('es-CL', options) );
+    }
+
+    this.lineChartData = _lineChartData;
+
   }
 
 

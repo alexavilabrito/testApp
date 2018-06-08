@@ -1,68 +1,88 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {SerieModel} from "../app/models/SerieModel";
+import {IndicadorModel} from "../app/models/IndicadorModel";
+import IObservable = Interfaces.IObservable;
+import IObserver = Interfaces.IObserver;
 
 @Injectable()
-export class IndicadorProvider
+export class IndicadorProvider implements IObservable
 {
 
   private urlService = "https://mindicador.cl/api";
-  private serieList:Array<SerieModel>;
 
-  public handleData:any;
-  public handleError:any;
-  public handleComplete:any;
+  private _observer: IObserver[];
 
-  constructor( public http : HttpClient) { }
+  private indicadorList:Array<IndicadorModel>;
+
+  constructor( public http : HttpClient  ) {
+
+    this._observer = [];
+
+  }
+
+
+  RegisterObserver(theObserver: Interfaces.IObserver) {
+    this._observer.push( theObserver );
+  }
+
+
+  RemoveObserver(theObserver: Interfaces.IObserver) {
+    for( let i=0 ; i < this._observer.length ; i++ ){
+      if( this._observer[i] === theObserver ){
+        this._observer.splice( i , 1 );
+      }
+    }
+  }
+
+
+  NotifyObservers(  ) {
+    for( let i=0 ; i < this._observer.length ; i++ ) {
+      this._observer[i].ReceiveNotification( this.indicadorList );
+    }
+  }
+
+
+
 
   getIndicadores(  ) {
-     return this.http.get( this.urlService );
-  }
-
-
-  getIndicadoresHandle( indicador ) {
-    this.http.get( this.urlService + '/' + indicador.codigo )
-      .subscribe( this.handleData , this.handleError , this.handleComplete );
-  }
-
-
-  geObserveIndicador(  ) {
-    this.http.get( this.urlService )
-      .subscribe(
-        (result)=>{
-          console.log(result);
-          this.serieList = new Array<SerieModel>();
-          for(var k in result['serie']) {
-            //console.log( result['serie'][k] );
-            let serie = new SerieModel();
-
-            serie.fecha = result['serie'][k].fecha;
-            serie.valor = result['serie'][k].valor;
-            this.serieList.push( serie );
+    return this.http.get( this.urlService ).subscribe(
+      (result)=>{
+        this.indicadorList = new Array<IndicadorModel>();
+        for(var k in result) {
+          if( k != 'version' && k != 'autor' && k != 'fecha' ) {
+            //console.log(k, result[k]);
+            let indicador = new IndicadorModel();
+            indicador.codigo = result[k]['codigo'];
+            indicador.nombre = result[k]['nombre'];
+            indicador.unidad_medida = result[k]['unidad_medida'];
+            indicador.valor = result[k]['valor'];
+            this.indicadorList.push( indicador );
           }
-
-          this.serieList = this.serieList.sort(
-            (a,b):number => {
-              if( a.fecha < b.fecha ) return 1;
-              if( a.fecha > b.fecha ) return -1;
-              return 0;
-            }
-          );
-        },(exception) =>{
-          console.log(exception)
         }
-      );
+        //console.log( this.indicadorList );
+
+        this.indicadorList = this.indicadorList.sort(
+          (a,b):number => {
+            if( a.nombre < b.nombre ) return -1;
+            if( a.nombre > b.nombre ) return 1;
+            return 0;
+          }
+        );
+
+        this.NotifyObservers();
+
+      },(exception)=>{
+        console.log(exception);
+      }
+    );
   }
 
 
-  getValorIndicador( indicador  ){
-    return this.http.get( this.urlService+'/'+indicador.codigo )
-  }
 
   getValorIndicador_ext( indicador  ){
     return this.http.get( this.urlService+'/'+indicador.codigo )
   }
-
 
 
 }

@@ -1,55 +1,34 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { IndicadorProvider } from '../../provider/indicador';
-import { IndicadorModel } from "../../app/models/IndicadorModel";
 import {ItemDetailsPage} from "../itemdetails/itemdetails";
 import {GraficoPage} from "../grafico/grafico";
+import IObserver = Interfaces.IObserver;
 
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
-export class HomePage {
+export class HomePage implements IObserver{
 
-  public indicadorList:Array<IndicadorModel>;
+  private _myId: number;
+  static NextClientId: number = 0;
+
+  private indicadorList;
 
   constructor(public navCtrl: NavController , indicador: IndicadorProvider ) {
 
+    indicador.RegisterObserver( this );
+    this._myId = HomePage.NextClientId++;
 
-    indicador.getIndicadores( ).subscribe(
-        (result)=>{
-          this.indicadorList = new Array<IndicadorModel>();
-          for(var k in result) {
-            if( k != 'version' && k != 'autor' && k != 'fecha' ) {
-              //console.log(k, result[k]);
-              let indicador = new IndicadorModel();
-              indicador.codigo = result[k]['codigo'];
-              indicador.nombre = result[k]['nombre'];
-              indicador.unidad_medida = result[k]['unidad_medida'];
-              indicador.valor = result[k]['valor'];
-              this.indicadorList.push( indicador );
-            }
-          }
-          //console.log( this.indicadorList );
-
-          this.indicadorList = this.indicadorList.sort(
-            (a,b):number => {
-              if( a.nombre < b.nombre ) return -1;
-              if( a.nombre > b.nombre ) return 1;
-              return 0;
-            }
-          );
-
-        },(exception)=>{
-          console.log(exception);
-        }
-    );
-
-
+    indicador.getIndicadores();
 
   }
 
+  getIndicadores(){
+    return this.indicadorList;
+  }
 
 
   itemTapped(item) {
@@ -59,6 +38,11 @@ export class HomePage {
 
   itemTappedGrafico(item) {
     this.navCtrl.push( GraficoPage , { item } );
+  }
+
+
+  ReceiveNotification <Array>(dataArrived: Array ): void {
+    this.indicadorList = dataArrived;
   }
 
 
