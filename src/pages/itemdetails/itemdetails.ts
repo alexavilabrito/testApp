@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {NavController, NavParams} from "ionic-angular";
+import {NavController, NavParams, Refresher} from "ionic-angular";
 import IObserver = Interfaces.IObserver;
 import {SerieProvider} from "../../provider/serie";
 
@@ -9,21 +9,30 @@ import {SerieProvider} from "../../provider/serie";
 })
 export class ItemDetailsPage implements IObserver{
 
-  public serieList;
-
+  private serieList = null;
+  private serie: SerieProvider;
+  private item: any;
+  private refresher: Refresher = null;
 
   constructor(public navCtrl: NavController , navParam : NavParams , serie: SerieProvider ) {
+    this.item = navParam.get('item');
+    this.serie = serie;
+    this.serie.RegisterObserver( this );
+    this.serie.getSerieIndicador( this.item );
+   }
 
-    let item = navParam.get('item');
-    serie.RegisterObserver( this );
-    serie.getSerieIndicador( item );
-
+  doRefresh(refresher: Refresher) {
+    this.serie.getSerieIndicador( this.item );
+    this.refresher=refresher;
   }
-
 
   ReceiveNotification<Array>(dataArrived: Array): void {
     this.serieList = dataArrived;
-  }
+    if( this.refresher != null ) this.refresher.complete();
+   }
 
+   getDataTable(){
+    return this.serieList;
+   }
 
 }

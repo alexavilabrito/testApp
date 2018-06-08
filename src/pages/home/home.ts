@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {NavController, Refresher} from 'ionic-angular';
 import { IndicadorProvider } from '../../provider/indicador';
 import {ItemDetailsPage} from "../itemdetails/itemdetails";
 import {GraficoPage} from "../grafico/grafico";
 import IObserver = Interfaces.IObserver;
-
 
 @Component({
   selector: 'page-home',
@@ -12,38 +11,37 @@ import IObserver = Interfaces.IObserver;
 })
 export class HomePage implements IObserver{
 
-  private _myId: number;
-  static NextClientId: number = 0;
+
 
   private indicadorList;
+  private indicador:IndicadorProvider;
+  private refresher: Refresher = null;
 
   constructor(public navCtrl: NavController , indicador: IndicadorProvider ) {
-
     indicador.RegisterObserver( this );
-    this._myId = HomePage.NextClientId++;
-
-    indicador.getIndicadores();
-
+    this.indicador = indicador;
+    this.indicador.getIndicadores();
   }
 
-  getIndicadores(){
-    return this.indicadorList;
+  doRefresh(refresher: Refresher) {
+    this.indicador.getIndicadores();
+    this.refresher=refresher;
   }
-
-
   itemTapped(item) {
     this.navCtrl.push( ItemDetailsPage , { item } );
   }
-
 
   itemTappedGrafico(item) {
     this.navCtrl.push( GraficoPage , { item } );
   }
 
-
-  ReceiveNotification <Array>(dataArrived: Array ): void {
-    this.indicadorList = dataArrived;
+  getDataTable(){
+    return this.indicadorList;
   }
 
+  ReceiveNotification <Array> (dataArrived: Array ) : void {
+    this.indicadorList = dataArrived;
+    if( this.refresher != null ) this.refresher.complete();
+  }
 
 }

@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {SerieModel} from "../app/models/SerieModel";
-import {IndicadorModel} from "../app/models/IndicadorModel";
 import IObservable = Interfaces.IObservable;
 import IObserver = Interfaces.IObserver;
 
