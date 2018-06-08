@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import {NavController, Refresher} from 'ionic-angular';
-import { IndicadorProvider } from '../../provider/indicador';
+import {Component} from '@angular/core';
+import {LoadingController, NavController, Refresher} from 'ionic-angular';
+import {IndicadorProvider} from '../../provider/indicador';
 import {ItemDetailsPage} from "../itemdetails/itemdetails";
 import {GraficoPage} from "../grafico/grafico";
 import IObserver = Interfaces.IObserver;
@@ -9,39 +9,43 @@ import IObserver = Interfaces.IObserver;
   selector: 'page-home',
   templateUrl: 'home.html'
 })
-export class HomePage implements IObserver{
-
+export class HomePage implements IObserver {
 
 
   private indicadorList;
-  private indicador:IndicadorProvider;
   private refresher: Refresher = null;
+  private loading;
 
-  constructor(public navCtrl: NavController , indicador: IndicadorProvider ) {
-    indicador.RegisterObserver( this );
-    this.indicador = indicador;
+  constructor(public navCtrl: NavController, public indicador: IndicadorProvider, public loadingCtrl: LoadingController) {
+    this.loading = this.loadingCtrl.create({
+      content: 'Please wait...'
+    });
+    this.loading.present();
+    indicador.RegisterObserver(this);
     this.indicador.getIndicadores();
   }
 
   doRefresh(refresher: Refresher) {
     this.indicador.getIndicadores();
-    this.refresher=refresher;
+    this.refresher = refresher;
   }
+
   itemTapped(item) {
-    this.navCtrl.push( ItemDetailsPage , { item } );
+    this.navCtrl.push(ItemDetailsPage, {item});
   }
 
   itemTappedGrafico(item) {
-    this.navCtrl.push( GraficoPage , { item } );
+    this.navCtrl.push(GraficoPage, {item});
   }
 
-  getDataTable(){
+  getDataTable() {
     return this.indicadorList;
   }
 
-  ReceiveNotification <Array> (dataArrived: Array ) : void {
+  ReceiveNotification<Array>(dataArrived: Array): void {
     this.indicadorList = dataArrived;
-    if( this.refresher != null ) this.refresher.complete();
+    if (this.refresher != null) this.refresher.complete();
+    this.loading.dismiss();
   }
 
 }
